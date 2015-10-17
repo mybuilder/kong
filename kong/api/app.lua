@@ -140,7 +140,7 @@ local function attach_routes(routes)
 end
 
 -- Load core routes
-for _, v in ipairs({"kong", "apis", "consumers", "plugins"}) do
+for _, v in ipairs({"kong", "apis", "consumers", "plugins", "cache"}) do
   local routes = require("kong.api.routes."..v)
   attach_routes(routes)
 end

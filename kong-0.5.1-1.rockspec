@@ -205,7 +205,7 @@ build = {
     ["kong.api.routes.apis"] = "kong/api/routes/apis.lua",
     ["kong.api.routes.consumers"] = "kong/api/routes/consumers.lua",
     ["kong.api.routes.plugins"] = "kong/api/routes/plugins.lua",
-    ["kong.api.routes.plugins"] = "kong/api/routes/plugins.lua",
+    ["kong.api.routes.cache"] = "kong/api/routes/cache.lua",
 
     ["kong.plugins.jwt.migrations.cassandra"] = "kong/plugins/jwt/migrations/cassandra.lua",
     ["kong.plugins.jwt.handler"] = "kong/plugins/jwt/handler.lua",

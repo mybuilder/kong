@@ -60,44 +60,49 @@ function _M.delete(key)
   cache:delete(key)
 end
 
+function _M.delete_all()
+  local cache = ngx.shared.cache
+  cache:flush_all()
+end
+
 function _M.requests_key()
   return CACHE_KEYS.REQUESTS
 end
 
 function _M.api_key(host)
-  return CACHE_KEYS.APIS.."/"..host
+  return CACHE_KEYS.APIS..":"..host
 end
 
 function _M.consumer_key(id)
-  return CACHE_KEYS.CONSUMERS.."/"..id
+  return CACHE_KEYS.CONSUMERS..":"..id
 end
 
 function _M.plugin_key(name, api_id, consumer_id)
-  return CACHE_KEYS.PLUGINS.."/"..name.."/"..api_id..(consumer_id and "/"..consumer_id or "")
+  return CACHE_KEYS.PLUGINS..":"..name..":"..api_id..(consumer_id and ":"..consumer_id or "")
 end
 
 function _M.basicauth_credential_key(username)
-  return CACHE_KEYS.BASICAUTH_CREDENTIAL.."/"..username
+  return CACHE_KEYS.BASICAUTH_CREDENTIAL..":"..username
 end
 
 function _M.oauth2_credential_key(client_id)
-  return CACHE_KEYS.OAUTH2_CREDENTIAL.."/"..client_id
+  return CACHE_KEYS.OAUTH2_CREDENTIAL..":"..client_id
 end
 
 function _M.oauth2_token_key(access_token)
-  return CACHE_KEYS.OAUTH2_TOKEN.."/"..access_token
+  return CACHE_KEYS.OAUTH2_TOKEN..":"..access_token
 end
 
 function _M.keyauth_credential_key(key)
-  return CACHE_KEYS.KEYAUTH_CREDENTIAL.."/"..key
+  return CACHE_KEYS.KEYAUTH_CREDENTIAL..":"..key
 end
 
 function _M.acls_key(consumer_id)
-  return CACHE_KEYS.ACLS.."/"..consumer_id
+  return CACHE_KEYS.ACLS..":"..consumer_id
 end
 
 function _M.ssl_data(api_id)
-  return CACHE_KEYS.SSL.."/"..api_id
+  return CACHE_KEYS.SSL..":"..api_id
 end
 
 function _M.get_or_set(key, cb, exptime)
