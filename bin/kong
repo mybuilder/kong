@@ -22,7 +22,8 @@ local commands = {
   restart = "kong.cli.restart",
   version = "kong.cli.version",
   ["--version"] = "kong.cli.version",
-  migrations = "kong.cli.migrations"
+  migrations = "kong.cli.migrations",
+  cluster = "kong.cli.cluster"
 }
 
 local help_message = string.format([[
