@@ -56,6 +56,32 @@
 # dnsmasq_port: 8053
 
 ######
+## Cluster settings
+# cluster:
+
+  ######
+  ## Address to bind network listeners to.
+  # bind: "0.0.0.0"
+
+  ######
+  ## Network interface to bind to. Can be used instead of bind if the interface is known but 
+  ## not the address. If both are provided, then Kong verifies that the interface has the bind 
+  ## address that is provided.
+  # iface: ""
+
+  ######
+  ## Address to bind the RPC listener.
+  # rpc-addr: "127.0.0.1:7373"
+
+  ######
+  ## Key for encrypting network traffic within Kong. Must be a base64-encoded 16-byte key.
+  # encrypt: "foo"
+
+  ######
+  ## Name of this node. Must be unique in the cluster.
+  # node: "hostname"
+
+######
 ## Specify which database to use from the databases_available property.
 # database: cassandra
 

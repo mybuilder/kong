@@ -14,19 +14,7 @@ function _M.stop(kong_config)
 end
 
 function _M.start(nginx_working_dir, dnsmasq_port)
-  local cmd = IO.cmd_exists("dnsmasq") and "dnsmasq"
-
-  if not cmd then -- Load dnsmasq given the PATH settings
-    local env_path = (os.getenv("PATH")..":" or "").."/usr/local/sbin:/usr/sbin" -- Also check in default paths
-    local paths = stringy.split(env_path, ":")
-    for _, path in ipairs(paths) do
-      if IO.file_exists(path..(stringy.endswith(path, "/") and "" or "/").."dnsmasq") then
-        cmd = path.."/dnsmasq"
-        break
-      end
-    end
-  end
-
+  local cmd = cutils.find_cmd("dnsmasq")
   if not cmd then
     cutils.logger:error_exit("Can't find dnsmasq")
   end

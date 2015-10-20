@@ -9,6 +9,7 @@ local constants = require "kong.constants"
 local syslog = require "kong.tools.syslog"
 local socket = require "socket"
 local dnsmasq = require "kong.cli.utils.dnsmasq"
+local serf = require "kong.cli.utils.serf"
 local config = require "kong.tools.config_loader"
 local dao = require "kong.tools.dao_loader"
 
@@ -265,8 +266,11 @@ function _M.send_signal(args_config, signal)
       check_port(dnsmasq_port)
       dnsmasq.start(kong_config.nginx_working_dir, dnsmasq_port)
     end
+    serf.stop(kong_config)
+    serf.start(kong_config.nginx_working_dir)
   elseif signal == STOP or signal == QUIT then
     dnsmasq.stop(kong_config)
+    serf.stop(kong_config)
   end
 
   -- Check ulimit value

@@ -9,6 +9,7 @@ local constants = require "kong.constants"
 local Object = require "classic"
 local lpath = require "luarocks.path"
 local IO = require "kong.tools.io"
+local stringy = require "stringy"
 
 --
 -- Colors
@@ -127,11 +128,29 @@ local function is_port_open(port)
   return code == 0
 end
 
+local function find_cmd(app_name)
+  local cmd = IO.cmd_exists(app_name) and app_name
+
+  if not cmd then -- Load dnsmasq given the PATH settings
+    local env_path = (os.getenv("PATH")..":" or "").."/usr/local/sbin:/usr/sbin" -- Also check in default paths
+    local paths = stringy.split(env_path, ":")
+    for _, path in ipairs(paths) do
+      if IO.file_exists(path..(stringy.endswith(path, "/") and "" or "/")..app_name) then
+        cmd = path.."/"..app_name
+        break
+      end
+    end
+  end
+
+  return cmd
+end
+
 return {
   colors = colors,
   logger = logger,
   get_kong_infos = get_kong_infos,
   get_kong_config_path = get_kong_config_path,
   get_luarocks_install_dir = get_luarocks_install_dir,
-  is_port_open = is_port_open
+  is_port_open = is_port_open,
+  find_cmd = find_cmd
 }
