@@ -37,11 +37,10 @@ local AUTHENTICATED_USERID = "authenticated_userid"
 local AUTHORIZE_URL = "^%s/oauth2/authorize(/?(\\?[^\\s]*)?)$"
 local TOKEN_URL = "^%s/oauth2/token(/?(\\?[^\\s]*)?)$"
 
-local function generate_token(conf, credential, authenticated_userid, scope, state, expiration, disable_refresh)
+local function generate_token(conf, credential, authenticated_userid, scope, state, expiration, disable_refresh, access_token, refresh_token)
   local token_expiration = expiration or conf.token_expiration
 
-  local refresh_token
-  if not disable_refresh and token_expiration > 0 then
+  if not refresh_token and not disable_refresh and token_expiration > 0 then
     refresh_token = utils.random_string()
   end
 
@@ -49,6 +48,7 @@ local function generate_token(conf, credential, authenticated_userid, scope, sta
     credential_id = credential.id,
     authenticated_userid = authenticated_userid,
     expires_in = token_expiration,
+    access_token = access_token,
     refresh_token = refresh_token,
     scope = scope
   }, {ttl = token_expiration > 0 and 1209600 or nil}) -- Access tokens (and their associated refresh token) are being
@@ -275,6 +275,10 @@ local function issue_token(conf)
       end
     end
 
+    local generate = function (authenticated_userid, scope, expiration, disable_refresh)
+      return generate_token(conf, client, authenticated_userid, scope, state, expiration, disable_refresh, parameters[ACCESS_TOKEN], parameters[REFRESH_TOKEN]);
+    end
+
     if not response_params[ERROR] then
       if grant_type == GRANT_AUTHORIZATION_CODE then
         local code = parameters[CODE]
@@ -294,7 +298,7 @@ local function issue_token(conf)
           if not ok then
             response_params = scopes -- If it's not ok, then this is the error message
           else
-            response_params = generate_token(conf, client, parameters.authenticated_userid, table.concat(scopes, " "), state, nil, true)
+            response_params = generate(parameters.authenticated_userid, table.concat(scopes, " "), conf.token_expiration, true)
           end
         end
       elseif grant_type == GRANT_PASSWORD then
@@ -309,7 +313,7 @@ local function issue_token(conf)
           if not ok then
             response_params = scopes -- If it's not ok, then this is the error message
           else
-            response_params = generate_token(conf, client, parameters.authenticated_userid, table.concat(scopes, " "), state)
+            response_params = generate(parameters.authenticated_userid, table.concat(scopes, " "))
           end
         end
       elseif grant_type == GRANT_REFRESH_TOKEN then
